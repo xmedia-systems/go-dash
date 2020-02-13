@@ -118,7 +118,8 @@ func TestWidevineContentProtection_ImplementsInterface(t *testing.T) {
 
 func TestNewMPDLiveWithBaseURLInMPD(t *testing.T) {
 	m := NewMPD(DASH_PROFILE_LIVE, VALID_MEDIA_PRESENTATION_DURATION, VALID_MIN_BUFFER_TIME)
-	m.BaseURL = VALID_BASE_URL_VIDEO
+	m.BaseURL = &BaseURL{Value: new(string)}
+	*m.BaseURL.Value = VALID_BASE_URL_VIDEO
 	require.NotNil(t, m)
 	expectedMPD := &MPD{
 		XMLNs:                     Strptr("urn:mpeg:dash:schema:mpd:2011"),
@@ -128,8 +129,10 @@ func TestNewMPDLiveWithBaseURLInMPD(t *testing.T) {
 		MinBufferTime:             Strptr(VALID_MIN_BUFFER_TIME),
 		period:                    &Period{},
 		Periods:                   []*Period{{}},
-		BaseURL:                   VALID_BASE_URL_VIDEO,
+		BaseURL:                   &BaseURL{},
 	}
+	expectedMPD.BaseURL.Value = new(string)
+	*expectedMPD.BaseURL.Value = VALID_BASE_URL_VIDEO
 
 	expectedString, err := expectedMPD.WriteToString()
 	require.NoError(t, err)
